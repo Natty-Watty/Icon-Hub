@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Icon Hub</title>
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Natty-Watty/Icon-Hub/main/assets/extra/Icon%20Hub%20Image.png">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{color-scheme:dark;--bg:#080808;--surface:#101010;--border:#242424;--text:#f5f5f5;--muted:#858585}
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+button,input{font:inherit}
+button{cursor:pointer}
+.header{height:68px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 6%;gap:12px}
+.site-icon{width:32px;height:32px;object-fit:contain;border-radius:7px;flex-shrink:0}
+.logo{font-size:19px;font-weight:650;letter-spacing:-.7px}
+.logo span{color:var(--muted);font-weight:400}
+.main{max-width:1200px;margin:auto;padding:70px 24px}
+.hero{text-align:center;margin-bottom:42px}
+.hero h1{font-size:clamp(32px,5vw,48px);letter-spacing:-2px;font-weight:600}
+.hero p{color:var(--muted);font-size:14px;margin-top:12px}
+.search-wrap{max-width:560px;margin:30px auto 0;position:relative}
+.search-wrap img{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:19px;height:19px;object-fit:contain;opacity:.8}
+.search{width:100%;height:50px;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:0 16px 0 46px;color:var(--text);outline:none;transition:border-color .2s}
+.search:focus{border-color:#666}
+.search::placeholder{color:#686868}
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+.result-count{font-size:13px;color:var(--muted)}
+.sort-dropdown{position:relative}
+.sort-trigger{display:flex;align-items:center;justify-content:space-between;gap:20px;min-width:130px;padding:9px 12px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:7px;font-size:12px}
+.sort-arrow{display:flex;align-items:center;justify-content:center;transition:transform .2s}
+.sort-arrow img{width:13px;height:13px;object-fit:contain}
+.sort-dropdown.open .sort-arrow{transform:rotate(180deg)}
+.sort-menu{position:absolute;top:calc(100% + 8px);right:0;width:160px;padding:5px;background:#141414;border:1px solid #303030;border-radius:9px;box-shadow:0 12px 35px #0008;z-index:5;opacity:0;visibility:hidden;transform:translateY(-5px) scale(.98);transition:opacity .15s,transform .15s,visibility .15s}
+.sort-dropdown.open .sort-menu{opacity:1;visibility:visible;transform:translateY(0) scale(1)}
+.sort-option{width:100%;padding:10px;border:0;border-radius:5px;background:transparent;color:#aaa;text-align:left;font-size:12px}
+.sort-option:hover{background:#222;color:#fff}
+.sort-option.active{background:#202020;color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px}
+.icon-card{position:relative;min-width:0;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 12px 13px;display:flex;flex-direction:column;align-items:center;gap:12px;transition:border-color .18s,transform .18s;cursor:pointer}
+.icon-card:hover{border-color:#505050;transform:translateY(-2px)}
+.icon-preview{height:76px;width:100%;display:flex;align-items:center;justify-content:center}
+.icon-preview img{max-width:64px;max-height:64px;object-fit:contain}
+.icon-name{font-size:12px;color:#c9c9c9;text-align:center;overflow-wrap:anywhere;width:100%}
+.icon-size{font-size:11px;color:var(--muted);text-align:center}
+.empty{grid-column:1/-1;padding:70px 20px;text-align:center;color:var(--muted);font-size:14px}
+.footer{text-align:center;padding:28px 20px;border-top:1px solid var(--border);color:#666;font-size:12px}
+.modal-overlay{position:fixed;inset:0;z-index:10;background:#000b;backdrop-filter:blur(7px);display:none;align-items:center;justify-content:center;padding:18px}
+.modal-overlay.open{display:flex}
+.modal{width:100%;max-width:470px;background:#101010;border:1px solid #303030;border-radius:14px;overflow:hidden;animation:appear .18s ease}
+@keyframes appear{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.modal-header{height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid var(--border)}
+.modal-title{font-size:14px;font-weight:600}
+.close-btn{height:30px;width:30px;display:grid;place-items:center;background:#191919;border:1px solid #303030;border-radius:7px;color:#aaa;font-size:19px}
+.modal-preview{height:230px;background:#0b0b0b;display:flex;align-items:center;justify-content:center;padding:24px;border-bottom:1px solid var(--border)}
+.modal-preview img{max-width:100%;max-height:100%;object-fit:contain}
+.modal-content{padding:20px}
+.detail-name{font-size:18px;font-weight:600;overflow-wrap:anywhere;letter-spacing:-.4px}
+.detail-url{font-size:11px;color:var(--muted);margin-top:8px;overflow-wrap:anywhere;line-height:1.6}
+.details{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+.detail-item{padding:12px;background:#171717;border:1px solid #282828;border-radius:8px;min-width:0}
+.detail-label{font-size:11px;color:var(--muted);margin-bottom:7px}
+.detail-value{font-size:13px;overflow-wrap:anywhere}
+.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}
+.action-btn{height:42px;border-radius:8px;border:1px solid #303030;background:#191919;color:#eee;font-size:12px;font-weight:500}
+.action-btn.primary{background:#f5f5f5;color:#111;border-color:#f5f5f5}
+.action-btn:hover{opacity:.82}
+@media(max-width:480px){.main{padding:48px 16px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.header{padding:0 18px}.toolbar{align-items:center}.modal-preview{height:200px}}
+</style>
+</head>
+<body>
+<header class="header">
+<img class="site-icon" src="https://raw.githubusercontent.com/Natty-Watty/Icon-Hub/main/assets/extra/Icon%20Hub%20Image.png" alt="Icon Hub">
+<div class="logo">Icon <span>Hub</span></div>
+</header>
+
+<main class="main">
+<section class="hero">
+<h1>Find your icon.</h1>
+<p>A clean collection of icons, ready to use.</p>
+<div class="search-wrap">
+<img src="https://raw.githubusercontent.com/Natty-Watty/Icon/main/assets/White%20Search%20Icon-nat/White%20Search%20Icon.png" alt="">
+<input class="search" id="search" type="search" placeholder="Search icons..." autocomplete="off">
+</div>
+</section>
+
+<div class="toolbar">
+<span class="result-count" id="resultCount">Loading icons...</span>
+<div class="sort-dropdown">
+<button class="sort-trigger" id="sortTrigger" aria-haspopup="true" aria-expanded="false">
+<span id="sortLabel">Name A–Z</span>
+<span class="sort-arrow">
+<img src="https://raw.githubusercontent.com/Natty-Watty/Icon-Hub/main/assets/extra/Simple%20Down%20Arrow%20Icon.png" alt="">
+</span>
+</button>
+<div class="sort-menu" id="sortMenu">
+<button class="sort-option active" data-value="name">Name A–Z</button>
+<button class="sort-option" data-value="name-desc">Name Z–A</button>
+</div>
+</div>
+</div>
+
+<section class="grid" id="iconGrid"></section>
+</main>
+
+<footer class="footer">Icon Hub</footer>
+
+<div class="modal-overlay" id="modalOverlay">
+<section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+<div class="modal-header">
+<span class="modal-title">Icon details</span>
+<button class="close-btn" id="closeModal" aria-label="Close">&times;</button>
+</div>
+<div class="modal-preview">
+<img id="modalImage" src="" alt="">
+</div>
+<div class="modal-content">
+<div class="detail-name" id="modalTitle"></div>
+<div class="detail-url" id="modalUrl"></div>
+<div class="details">
+<div class="detail-item">
+<div class="detail-label">Pixel size</div>
+<div class="detail-value" id="modalSize">Loading...</div>
+</div>
+<div class="detail-item">
+<div class="detail-label">File format</div>
+<div class="detail-value" id="modalFormat">—</div>
+</div>
+<div class="detail-item">
+<div class="detail-label">Created</div>
+<div class="detail-value" id="modalCreated">Checking...</div>
+</div>
+<div class="detail-item">
+<div class="detail-label">File size</div>
+<div class="detail-value" id="modalFileSize">Loading...</div>
+</div>
+</div>
+<div class="modal-actions">
+<button class="action-btn primary" id="downloadBtn">Download</button>
+<button class="action-btn" id="copyUrlBtn">Copy URL</button>
+</div>
+</div>
+</section>
+</div>
+
+<script>
+const ICONS_URL="https://api.github.com/repos/Natty-Watty/Icon-Hub/contents/assets/images";
+const API_URL="https://api.github.com/repos/Natty-Watty/Icon-Hub/commits?path=assets/images/";
+const RAW_URL="https://raw.githubusercontent.com/Natty-Watty/Icon-Hub/main/assets/images/";
+const grid=document.getElementById("iconGrid");
+const search=document.getElementById("search");
+const resultCount=document.getElementById("resultCount");
+const modalOverlay=document.getElementById("modalOverlay");
+const modalImage=document.getElementById("modalImage");
+const sortDropdown=document.querySelector(".sort-dropdown");
+const sortTrigger=document.getElementById("sortTrigger");
+const sortLabel=document.getElementById("sortLabel");
+let icons=[];
+let selectedIcon=null;
+let sortValue="name";
+
+function formatBytes(bytes){
+if(bytes===undefined||bytes===null)return"Unknown";
+if(bytes<1024)return bytes+" B";
+if(bytes<1048576)return(bytes/1024).toFixed(1)+" KB";
+return(bytes/1048576).toFixed(2)+" MB";
+}
+
+function formatDate(date){
+if(!date)return"Unknown";
+const parsed=new Date(date);
+if(Number.isNaN(parsed.getTime()))return"Unknown";
+return parsed.toLocaleDateString(undefined,{year:"numeric",month:"short",day:"numeric"});
+}
+
+async function copyText(text,button){
+try{
+await navigator.clipboard.writeText(text);
+const original=button.textContent;
+button.textContent="Copied";
+setTimeout(()=>button.textContent=original,1200);
+}catch{
+button.textContent="Copy failed";
+setTimeout(()=>button.textContent="Copy URL",1200);
+}
+}
+
+async function getPixelSize(icon){
+try{
+const response=await fetch(icon.url);
+if(!response.ok)throw new Error();
+const blob=await response.blob();
+if(icon.name.toLowerCase().endsWith(".svg")){
+const svgText=await blob.text();
+const width=svgText.match(/\bwidth=["']([\d.]+)(?:px)?["']/i);
+const height=svgText.match(/\bheight=["']([\d.]+)(?:px)?["']/i);
+const viewBox=svgText.match(/\bviewBox=["']\s*[-\d.]+\s+[-\d.]+\s+([\d.]+)\s+([\d.]+)\s*["']/i);
+return width&&height?`${width[1]} × ${height[1]} px`:viewBox?`${viewBox[1]} × ${viewBox[2]} px`:"Vector";
+}
+const bitmap=await createImageBitmap(blob);
+const size=`${bitmap.width} × ${bitmap.height} px`;
+bitmap.close();
+return size;
+}catch{
+return"Unavailable";
+}
+}
+
+async function openModal(icon){
+selectedIcon=icon;
+modalOverlay.classList.add("open");
+document.body.style.overflow="hidden";
+document.getElementById("modalTitle").textContent=icon.name;
+document.getElementById("modalUrl").textContent=icon.url;
+document.getElementById("modalSize").textContent="Loading...";
+document.getElementById("modalFormat").textContent=icon.name.split(".").pop().toUpperCase();
+document.getElementById("modalCreated").textContent="Checking...";
+document.getElementById("modalFileSize").textContent=formatBytes(icon.size);
+modalImage.src=icon.url;
+modalImage.alt=icon.name;
+
+const size=await getPixelSize(icon);
+if(selectedIcon!==icon)return;
+document.getElementById("modalSize").textContent=size;
+
+try{
+const response=await fetch(API_URL+encodeURIComponent(icon.filename));
+if(response.ok){
+const commits=await response.json();
+if(selectedIcon!==icon)return;
+const created=commits.length?commits[commits.length-1].commit.author.date:null;
+document.getElementById("modalCreated").textContent=formatDate(created);
+}else{
+document.getElementById("modalCreated").textContent="Unavailable";
+}
+}catch{
+document.getElementById("modalCreated").textContent="Unavailable";
+}
+
+try{
+const response=await fetch(icon.url);
+if(response.ok){
+const blob=await response.blob();
+if(selectedIcon!==icon)return;
+document.getElementById("modalFileSize").textContent=formatBytes(blob.size);
+}
+}catch{}
+}
+
+function closeModal(){
+modalOverlay.classList.remove("open");
+document.body.style.overflow="";
+selectedIcon=null;
+}
+
+async function render(){
+const query=search.value.trim().toLowerCase();
+const filtered=icons.filter(icon=>icon.name.toLowerCase().includes(query));
+filtered.sort((a,b)=>sortValue==="name-desc"?b.name.localeCompare(a.name):a.name.localeCompare(b.name));
+resultCount.textContent=`${filtered.length} icons`;
+grid.innerHTML="";
+if(!filtered.length){
+grid.innerHTML='<div class="empty">No icons found.</div>';
+return;
+}
+for(const icon of filtered){
+const card=document.createElement("article");
+card.className="icon-card";
+card.tabIndex=0;
+card.setAttribute("role","button");
+card.setAttribute("aria-label","View "+icon.name);
+const preview=document.createElement("div");
+preview.className="icon-preview";
+const img=document.createElement("img");
+img.src=icon.url;
+img.alt=icon.name;
+img.loading="lazy";
+preview.appendChild(img);
+const name=document.createElement("div");
+name.className="icon-name";
+name.textContent=icon.name;
+const size=document.createElement("div");
+size.className="icon-size";
+size.textContent="Loading size...";
+card.addEventListener("click",()=>openModal(icon));
+card.addEventListener("keydown",event=>{
+if(event.key==="Enter"||event.key===" "){
+event.preventDefault();
+openModal(icon);
+}
+});
+card.append(preview,name,size);
+grid.appendChild(card);
+getPixelSize(icon).then(pixelSize=>{
+size.textContent=pixelSize;
+});
+}
+}
+
+async function loadIcons(){
+try{
+const response=await fetch(ICONS_URL);
+if(!response.ok)throw new Error();
+const files=await response.json();
+icons=files.filter(file=>file.type==="file"&&/\.(svg|png|jpe?g|webp|gif|ico|avif)$/i.test(file.name)).map(file=>({name:file.name,url:RAW_URL+file.name.split("/").map(encodeURIComponent).join("/"),filename:file.name,size:file.size}));
+render();
+}catch{
+resultCount.textContent="Unable to load icons";
+grid.innerHTML='<div class="empty">Could not load icons. Please try again later.</div>';
+}
+}
+
+sortTrigger.addEventListener("click",()=>{
+const open=sortDropdown.classList.toggle("open");
+sortTrigger.setAttribute("aria-expanded",String(open));
+});
+
+document.querySelectorAll(".sort-option").forEach(option=>{
+option.addEventListener("click",()=>{
+sortValue=option.dataset.value;
+sortLabel.textContent=option.textContent;
+document.querySelectorAll(".sort-option").forEach(item=>item.classList.toggle("active",item===option));
+sortDropdown.classList.remove("open");
+sortTrigger.setAttribute("aria-expanded","false");
+render();
+});
+});
+
+document.addEventListener("click",event=>{
+if(!sortDropdown.contains(event.target)){
+sortDropdown.classList.remove("open");
+sortTrigger.setAttribute("aria-expanded","false");
+}
+});
+
+document.getElementById("closeModal").addEventListener("click",closeModal);
+modalOverlay.addEventListener("click",event=>{
+if(event.target===modalOverlay)closeModal();
+});
+
+document.addEventListener("keydown",event=>{
+if(event.key==="Escape"){
+closeModal();
+sortDropdown.classList.remove("open");
+sortTrigger.setAttribute("aria-expanded","false");
+}
+});
+
+document.getElementById("copyUrlBtn").addEventListener("click",()=>{
+if(selectedIcon)copyText(selectedIcon.url,document.getElementById("copyUrlBtn"));
+});
+
+document.getElementById("downloadBtn").addEventListener("click",async()=>{
+if(!selectedIcon)return;
+const icon=selectedIcon;
+try{
+const response=await fetch(icon.url);
+if(!response.ok)throw new Error();
+const blob=await response.blob();
+const objectUrl=URL.createObjectURL(blob);
+const link=document.createElement("a");
+link.href=objectUrl;
+link.download=icon.filename;
+document.body.appendChild(link);
+link.click();
+link.remove();
+setTimeout(()=>URL.revokeObjectURL(objectUrl),1000);
+}catch{
+window.open(icon.url,"_blank","noopener");
+}
+});
+
+search.addEventListener("input",render);
+loadIcons();
+</script>
+</body>
+</html>
